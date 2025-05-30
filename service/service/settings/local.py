@@ -1,17 +1,14 @@
 import os
 
-from .base import *
-
 from dotenv import dotenv_values
+
+from .base import *
 
 
 print('local')
 
 config = dotenv_values()
-print(config)
-
 SECRET_KEY = config.get('DJANGO_SECRET_KEY')
-print(SECRET_KEY)
 
 DEBUG = True
 ALLOWED_HOSTS = ['*']
@@ -29,3 +26,29 @@ DATABASES = {
 
 STATIC_URL = 'static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'static/')
+
+# logs
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+
+    'formatters': {
+        'formatter':{
+            'format': '{levelname} {asctime} {filename} {message}',
+            'style': '{', 
+            },
+        },
+    'handlers': {
+        'console': {
+            'class': 'logging.StreamHandler',
+            # 'formatter': 'formatter',
+            # 'encoding': 'UTF-8'
+            },
+        },
+    'loggers': {
+        'django.db.backends': {
+            'handlers': ['console',],
+            'level': 'DEBUG',
+        }
+    }
+}
