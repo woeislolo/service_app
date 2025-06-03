@@ -1,0 +1,75 @@
+services:
+
+  postgres:
+    image: postgres:17-alpine
+    hostname: postgres
+    container_name: postgres
+    restart: always
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    env_file:
+      - .docker.env
+    networks:
+      - service_app
+
+  drf-api:
+    build: .
+    image: drf-api
+    container_name: drf-api
+    restart: always
+    command: "python manage.py runserver 0.0.0.0:8000"
+    volumes:
+      - ./service:/app/www/service
+    ports:
+      - "8000:8000"
+    depends_on:
+      - postgres
+    env_file:
+      - .docker.env
+    networks:
+      - service_app
+
+  redis:
+    image: redis
+    hostname: redis
+    container_name: redis
+    restart: always
+    networks:
+      - service_app
+
+  celery-worker:
+    build: .
+    image: celery
+    container_name: celery-worker
+    entrypoint: celery
+    restart: always
+    command: -A service.celery.app worker --loglevel=info
+    volumes:
+      - ./service:/app/www/service
+    depends_on:
+      - redis
+    networks:
+      - service_app
+
+  celery-flower:
+    build:
+      context: .
+    container_name: celery-flower
+    hostname: flower
+    entrypoint: celery
+    command: -A service.celery.app flower
+    volumes:
+      - ./service:/app/www/service
+    depends_on:
+      - redis
+    ports:
+      - "5555:5555"
+    networks:
+      - service_app
+
+networks:
+  service_app:
+    driver: bridge
+
+volumes:
+  postgres-data:
