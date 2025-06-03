@@ -1,5 +1,3 @@
-import os
-
 from pathlib import Path
 
 
@@ -85,6 +83,3 @@ REST_FRAMEWORK = {
     'DEFAULT_PARSER_CLASSES': (
         'rest_framework.parsers.JSONParser',
     )}
-
-# celery
-CELERY_BROKER_URL = 'redis://redis:6379/0'

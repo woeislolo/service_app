@@ -2,8 +2,6 @@ import os
 
 from dotenv import dotenv_values
 
-from .base import *
-
 
 print('local')
 
