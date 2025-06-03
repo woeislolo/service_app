@@ -15,3 +15,6 @@ DATABASES = {
         "PORT": os.environ.get("POSTGRES_PORT"),
     },
 }
+
+# celery
+CELERY_BROKER_URL = 'redis://redis:6379/0'
